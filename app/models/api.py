@@ -12,6 +12,7 @@ class SceneInput(BaseModel):
 
 class SceneOutput(BaseModel):
     id: int
+    fpath: str
     description: str
     edit_prompt: str | None
     edit_results: T.List[str]
