@@ -8,6 +8,12 @@ from loguru import logger
 from core.config import DESCRIBER_URL, DESCRIBER_API_KEY
 
 
+SYSTEM_PROMPT = "You are a helpful assistant whose aim is to give the best possible description of any given image, with particular focus on identifying content and position of any text appearing in the image"
+USER_PROMPT = (
+    "Describe the provided image. What is written on the image and where is it located?"
+)
+
+
 class Describer(object):
     def __init__(self, addr: str, api_key: str):
         self.ai = AsyncOpenAI(
@@ -25,6 +31,15 @@ class Describer(object):
         return await self.ai.chat.completions.create(
             messages=[
                 {
+                    "role": "system",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": SYSTEM_PROMPT,
+                        }
+                    ],
+                },
+                {
                     "role": "user",
                     "content": [
                         {
@@ -35,10 +50,10 @@ class Describer(object):
                         },
                         {
                             "type": "text",
-                            "text": "What is written on the image and where is it located?",
+                            "text": USER_PROMPT,
                         },
                     ],
-                }
+                },
             ],
             model="Qwen/Qwen2.5-VL-72B-Instruct",
             max_tokens=100,
