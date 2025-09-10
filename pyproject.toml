@@ -26,15 +26,13 @@ dev = [
     "black>=24.3",
     "autopep8>=2.0.0",
     "ipdb>=0.13.0",
-    "pylint>=3.0.0"
-]
-aws = [
-    "mangum>=0.17.0"
+    "pylint>=3.0.0",
+    "ipython"
 ]
 
 [tool.black]
 line-length = 88
-target-version = ['py39', 'py310', 'py311']
+target-version = ['py312', 'py313']
 include = '\.pyi?$'
 exclude = '''
 /(
