@@ -16,13 +16,13 @@ class Describer(object):
         )
 
     async def run(self, fpath: str, ftype: str = "png") -> ChatCompletion:
-        async with aiofiles.open(fpath) as f:
+        async with aiofiles.open(fpath, "rb") as f:
             data = await f.read()
             image_b64_content = base64.b64encode(data)
 
-        loguru.debug("image loaded", fpath=fpath)
+        logger.debug("image loaded", fpath=fpath)
 
-        return self.ai.chat.completions.create(
+        return await self.ai.chat.completions.create(
             messages=[
                 {
                     "role": "user",
@@ -30,7 +30,7 @@ class Describer(object):
                         {
                             "type": "image_url",
                             "image_url": {
-                                "url": f"data:image/{ftype};base64,{image_b64_content}"
+                                "url": f"data:image/{ftype};base64,{image_b64_content.decode('ascii')}"
                             },
                         },
                         {
@@ -46,3 +46,20 @@ class Describer(object):
 
 
 describer = Describer(DESCRIBER_URL, DESCRIBER_API_KEY)
+
+if __name__ == "__main__":
+    import argparse
+    import asyncio
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-u", "--url")
+    parser.add_argument("-k", "--api-key")
+    parser.add_argument("-p", "--fpath")
+
+    args = parser.parse_args()
+
+    d = Describer(args.url, args.api_key)
+
+    res = asyncio.run(d.run(args.fpath))
+
+    print(res.to_json(indent=4))
