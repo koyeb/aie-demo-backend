@@ -18,6 +18,9 @@ LOCAL_PATH: str = config("LOCAL_PATH", default="/data")
 DESCRIBER_URL: str = config("DESCRIBER_URL", default="")
 DESCRIBER_API_KEY: str = config("DESCRIBER_API_KEY", default="")
 
+PROMPTER_URL: str = config("PROMPTER_URL", default="")
+PROMPTER_API_KEY: str = config("PROMPTER_API_KEY", default="")
+
 PROJECT_NAME: str = config("PROJECT_NAME", default="aie")
 
 # logging configuration
