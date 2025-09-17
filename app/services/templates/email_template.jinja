@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta name="x-apple-disable-message-reformatting" />
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <meta name="color-scheme" content="light dark" />
+      <meta name="supported-color-schemes" content="light dark" />
+      <title></title>
+      <style type="text/css" rel="stylesheet" media="all">
+      /* Base ------------------------------ */
+
+      @import url("https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap");
+      body {
+        width: 100% !important;
+        height: 100%;
+        margin: 0;
+        -webkit-text-size-adjust: none;
+      }
+
+      a {
+        color: #5EB189;
+        text-decoration: none;
+      }
+
+      a img {
+        border: none;
+      }
+
+      td {
+        word-break: break-word;
+      }
+
+      .preheader {
+        display: none !important;
+        visibility: hidden;
+        mso-hide: all;
+        font-size: 1px;
+        line-height: 1px;
+        max-height: 0;
+        max-width: 0;
+        opacity: 0;
+        overflow: hidden;
+      }
+
+      /* Type ------------------------------ */
+
+      body,
+      td,
+      th {
+        font-family: "Poppins", Helvetica, Arial, sans-serif;
+      }
+
+      h1 {
+        margin-top: 0;
+        color: #333333;
+        font-size: 22px;
+        font-weight: 600;
+        text-align: left;
+      }
+
+      h2 {
+        margin-top: 0;
+        color: #333333;
+        font-size: 16px;
+        font-weight: 600;
+        text-align: left;
+      }
+
+      h3 {
+        margin-top: 0;
+        color: #333333;
+        font-size: 14px;
+        font-weight: 600;
+        text-align: left;
+      }
+
+      td,
+      th {
+        font-size: 16px;
+      }
+
+      p,
+      ul,
+      ol,
+      blockquote {
+        margin: .4em 0 1.1875em;
+        font-size: 16px;
+        line-height: 1.625;
+      }
+
+      p.sub {
+        font-size: 13px;
+      }
+      /* Utilities ------------------------------ */
+
+      .align-right {
+        text-align: right;
+      }
+
+      .align-left {
+        text-align: left;
+      }
+
+      .align-center {
+        text-align: center;
+      }
+
+      .u-margin-bottom-none {
+        margin-bottom: 0;
+      }
+
+      /* Buttons ------------------------------ */
+
+      .button {
+        min-width: 150px;
+        background-color: #87FCC4;
+        border-top: 16px solid #87FCC4;
+        border-right: 24px solid #87FCC4;
+        border-bottom: 16px solid #87FCC4;
+        letter-spacing: 0.1em;
+        border-left: 24px solid #87FCC4;
+        display: inline-block;
+        color: #121212;
+        text-decoration: none;
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 11px;
+        border-radius: 30px;
+        box-shadow: 0 2px 3px rgba(0, 0, 0, 0.16);
+        -webkit-text-size-adjust: none;
+        box-sizing: border-box;
+      }
+
+      .button--green {
+        background-color: #22BC66;
+        border-top: 10px solid #22BC66;
+        border-right: 18px solid #22BC66;
+        border-bottom: 10px solid #22BC66;
+        border-left: 18px solid #22BC66;
+      }
+
+      .button--red {
+        background-color: #FF6136;
+        border-top: 10px solid #FF6136;
+        border-right: 18px solid #FF6136;
+        border-bottom: 10px solid #FF6136;
+        border-left: 18px solid #FF6136;
+      }
+
+      @media only screen and (max-width: 500px) {
+        .button {
+          width: 100% !important;
+          text-align: center !important;
+        }
+      }
+
+      /* Attribute list ------------------------------ */
+
+      .attributes {
+        margin: 0 0 21px;
+      }
+
+      .attributes_content {
+        background-color: #F4F4F7;
+        padding: 16px;
+      }
+
+      .attributes_item {
+        padding: 0;
+      }
+
+      body {
+        background-color: #F2F4F6;
+        color: #51545E;
+      }
+
+      p {
+        color: #51545E;
+      }
+
+      .email-wrapper {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        -premailer-width: 100%;
+        -premailer-cellpadding: 0;
+        -premailer-cellspacing: 0;
+        background-color: #F2F4F6;
+      }
+
+      .email-content {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        -premailer-width: 100%;
+        -premailer-cellpadding: 0;
+        -premailer-cellspacing: 0;
+      }
+      /* Masthead ----------------------- */
+
+      .email-masthead {
+        padding: 25px 0;
+        text-align: center;
+      }
+
+      .email-masthead_name {
+        font-size: 16px;
+        font-weight: 600;
+        color: #A8AAAF;
+        text-decoration: none;
+        text-shadow: 0 1px 0 white;
+      }
+      /* Body ------------------------------ */
+
+      .email-body {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        -premailer-width: 100%;
+        -premailer-cellpadding: 0;
+        -premailer-cellspacing: 0;
+      }
+
+      .email-body_inner {
+        width: 570px;
+        margin: 0 auto;
+        padding: 0;
+        border-radius: 10px;
+        -premailer-width: 570px;
+        -premailer-cellpadding: 0;
+        -premailer-cellspacing: 0;
+        background-color: #FFFFFF;
+      }
+
+      .email-footer {
+        width: 570px;
+        margin: 0 auto;
+        padding: 0;
+        -premailer-width: 570px;
+        -premailer-cellpadding: 0;
+        -premailer-cellspacing: 0;
+        text-align: center;
+      }
+
+      .email-footer p {
+        color: #575958;
+      }
+
+      .body-action {
+        width: 100%;
+        margin: 30px auto;
+        padding: 0;
+        -premailer-width: 100%;
+        -premailer-cellpadding: 0;
+        -premailer-cellspacing: 0;
+        text-align: center;
+      }
+
+      .body-sub {
+        margin-top: 25px;
+        padding-top: 25px;
+        border-top: 1px solid #EAEAEC;
+      }
+
+      .content-cell {
+        padding: 45px;
+      }
+
+      /*Media Queries ------------------------------ */
+
+      @media only screen and (max-width: 600px) {
+        .email-body_inner,
+        .email-footer {
+          width: 100% !important;
+        }
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body,
+        .email-body,
+        .email-content,
+        .email-wrapper,
+        .email-masthead {
+          background-color: #121212 !important;
+          color: #FFF !important;
+        }
+        p,
+        ul,
+        ol,
+        blockquote,
+        h1,
+        h2,
+        h3,
+        span,
+        .purchase_item {
+          color: #FFF !important;
+        }
+
+        body {
+          background-color: #222222 !important;
+        }
+
+        .button {
+          color: #121212 !important;
+        }
+
+        a {
+          color: #87FCC4;
+        }
+        
+        .email-footer_p {
+          background-color: #121212 !important;
+          color: #B8B8B8 !important;
+        }
+
+        .email-body_inner {
+          background-color: #222222 !important;
+          color: #FFF !important;
+        }
+        .attributes_content,
+        .discount {
+          background-color: #222 !important;
+        }
+        .email-masthead_name {
+          text-shadow: none !important;
+        }
+        /* Shows Dark Mode-Only Content, Like Images */
+        .email-masthead_logo_dark { display:block !important; width: auto !important; overflow: visible !important; float: none !important; max-height:inherit !important; max-width:inherit !important; line-height: auto !important; margin-top:0px !important; visibility:inherit !important; }
+        
+        /* Hides Light Mode-Only Content, Like Images */
+        .email-masthead_logo_light { display:none; display:none !important; }
+      }
+
+      :root {
+        color-scheme: light dark;
+        supported-color-schemes: light dark;
+      }
+      </style>
+      <!--[if mso]>
+      <style type="text/css">
+        .f-fallback  {
+          font-family: Arial, sans-serif;
+        }
+      </style>
+    <![endif]-->
+  </head>
+  <body>
+    <table class="email-wrapper" role="presentation">
+      <tr>
+	<td class="email-masthead">
+	  <a href="https://koyeb.com" class="f-fallback email-masthead_name">
+	    <img class="email-masthead_logo_light" src="https://www.koyeb.com/static/images/logos/koyeb-logo-dark.png" width="150" height="auto" alt="Koyeb logo" style="color: #33373E; font-family:'proxima_nova', Helvetica, Arial, sans-serif; text-align:center; font-weight:bold; font-size:36px; line-height:40px; text-decoration: none; margin: 0 auto; padding: 0;" border="0" />
+	    <!-- The following Dark Mode logo image is hidden 
+	    with MSO conditional code and inline CSS, but will be
+	    revealed once Dark Mode is triggered -->
+	    <!--[if !mso]><! --><div class="email-masthead_logo_dark" style="display:none; overflow:hidden; float:left; width:0px; max-height:0px; max-width:0px; line-height:0px; visibility:hidden;" align="center">
+		  <img src="https://www.koyeb.com/static/images/logos/koyeb-logo-light.png" width="150" height="auto" alt="Koyeb logo" style="color: #ffffff; font-family:'proxima_nova', Helvetica, Arial, sans-serif; text-align:center; font-weight:bold; font-size:36px; line-height:40px; text-decoration: none; margin: 0 auto; padding: 0;" border="0" />
+	    </div><!--<![endif]-->
+	  </a>
+	</td>
+      </tr>
+      <tr>
+        <td class="email-body" align="center">
+          <table class="email-body_inner" role="presentation">
+            <tr>
+              <td class="content-cell">
+                {% if title %}
+                  <h1>{{ title }}</h1>
+                {% else %}
+                  <p>{{ greeting }} {{ name }},</p>
+                {% endif %}
+
+                {% for line in intro_lines %}
+                  <p>{{ line }}</p>
+                {% endfor %}
+
+                {% if action %}
+                  {% if action.instructions %}<p>{{ action.instructions }}</p>{% endif %}
+                  <p><a href="{{ action.link }}">{{ action.text }}</a></p>
+                {% endif %}
+
+                <p>The Koyeb Photoboth is powered by these tools:</p>
+                <ul>
+                {% for tool in tools %}
+                  <li><a href="{{tool.link}}">{{ tool.text }}</a></li>
+                {% endfor %}
+                </ul>
+
+                {% for line in outro_lines %}
+                  <p>{{ line }}</p>
+                {% endfor %}
+
+                <p>{{ signature }}</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+	<td>
+	  <table class="email-footer" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation">
+	    <tr>
+	      <td class="content-cell" align="center">
+		<p class="sub email-footer_p">
+		  <a href="https://community.koyeb.com/">Join the Koyeb community</a>
+		  <br/>
+		  Koyeb - The fastest way to deploy apps globally
+		</p>
+	      </td>
+	    </tr>
+	  </table>
+	</td>
+      </tr>
+    </table>
+  </body>
+</html>
