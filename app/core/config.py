@@ -11,7 +11,6 @@ config = Config(".env")
 API_PREFIX = "/api"
 VERSION = "0.1.0"
 DEBUG: bool = config("DEBUG", cast=bool, default=False)
-SECRET_KEY: Secret = config("SECRET_KEY", cast=Secret, default="")
 DATABASE_URL: str = config("DATABASE_URL", default="sqlite:///./app.db")
 LOCAL_PATH: str = config("LOCAL_PATH", default="/data")
 
