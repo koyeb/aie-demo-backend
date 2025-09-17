@@ -10,6 +10,8 @@ services:
       - "8080:8080"
     env_file:
       - .env
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /etc/keyfile.json
     command: bash -c "alembic upgrade head && uvicorn main:app --reload --host 0.0.0.0 --port 8080"
     volumes:
       - ./app:/app/
@@ -18,6 +20,7 @@ services:
       - ./alembic.ini:/app/alembic.ini
       - ./docker/entrypoint.sh:/app/entrypoint.sh
       - ./images:/data
+      - ./keyfile.json:/etc/keyfile.json
     depends_on:
       - db
   db:
