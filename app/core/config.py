@@ -25,6 +25,10 @@ IMAGE_EDITOR_API_KEY: str = config("IMAGE_EDITOR_API_KEY", default="")
 
 S3_BUCKET: str = config("S3_BUCKET", default="")
 
+EMAIL_SMTP: str = config("EMAIL_SMTP", default="")
+EMAIL_SMTP_USER: str = config("EMAIL_SMTP_USER", default="")
+EMAIL_SMTP_PASSWORD: str = config("EMAIL_SMTP_PASSWORD", default="")
+
 PROJECT_NAME: str = config("PROJECT_NAME", default="aie")
 
 # logging configuration
