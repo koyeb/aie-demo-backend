@@ -21,6 +21,8 @@ DESCRIBER_API_KEY: str = config("DESCRIBER_API_KEY", default="")
 PROMPTER_URL: str = config("PROMPTER_URL", default="")
 PROMPTER_API_KEY: str = config("PROMPTER_API_KEY", default="")
 
+S3_BUCKET: str = config("S3_BUCKET", default="")
+
 PROJECT_NAME: str = config("PROJECT_NAME", default="aie")
 
 # logging configuration

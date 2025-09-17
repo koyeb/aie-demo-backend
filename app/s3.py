@@ -6,16 +6,16 @@ from uuid import uuid4
 from gcloud.aio.storage import Storage, Blob
 from loguru import logger
 
+from core.config import S3_BUCKET
+
 
 class S3Storage(object):
-    def __init__(self, bucket: str, access_key: str, access_secret: str):
+    def __init__(self, bucket: str):
         """
         The object manages uploads to a bucket and also the creation
         of temporary download urls.
         """
         self.bucket = bucket
-        self.access_key = access_key
-        self.access_secret = access_secret
 
     @staticmethod
     def _get_id(obj_url: str) -> str:
@@ -77,19 +77,20 @@ class S3Storage(object):
         return resp
 
 
+storage = S3Storage(S3_BUCKET)
+
+
 if __name__ == "__main__":
     import argparse
     import asyncio
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--access-key")
-    parser.add_argument("-s", "--access-secret")
     parser.add_argument("-p", "--fpath")
     parser.add_argument("-b", "--bucket")
 
     args = parser.parse_args()
 
-    m = S3Storage(args.bucket, args.access_key, args.access_secret)
+    m = S3Storage(args.bucket)
 
     with open(args.fpath, "rb") as f:
         image_bin = f.read()
