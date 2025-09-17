@@ -2,7 +2,6 @@ import base64
 
 import aiofiles
 from openai import AsyncOpenAI
-from openai.types.chat import ChatCompletion
 from loguru import logger
 
 from core.config import DESCRIBER_URL, DESCRIBER_API_KEY
@@ -21,14 +20,14 @@ class Describer(object):
             api_key=api_key,
         )
 
-    async def run(self, fpath: str, ftype: str = "png") -> ChatCompletion:
+    async def run(self, fpath: str, ftype: str = "png") -> str:
         async with aiofiles.open(fpath, "rb") as f:
             data = await f.read()
             image_b64_content = base64.b64encode(data)
 
         logger.debug("image loaded", fpath=fpath)
 
-        return await self.ai.chat.completions.create(
+        res = await self.ai.chat.completions.create(
             messages=[
                 {
                     "role": "system",
@@ -58,6 +57,11 @@ class Describer(object):
             model="Qwen/Qwen2.5-VL-72B-Instruct",
             max_tokens=100,
         )
+
+        if not res or len(res.choices) == 0 or not res.choices[0].message:
+            raise RuntimeError("Missing value")
+
+        return res.choices[0].message
 
 
 describer = Describer(DESCRIBER_URL, DESCRIBER_API_KEY)
