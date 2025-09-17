@@ -8,7 +8,7 @@ from fastapi.concurrency import run_in_threadpool
 from loguru import logger
 
 from db import SessionLocal
-from fs import storage
+from s3 import storage
 from models.db import Scene
 from models.api import SceneOutput, SceneInput
 from services.describer import describer
