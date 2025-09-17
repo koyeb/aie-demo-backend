@@ -1,10 +1,9 @@
 import base64
 from io import BytesIO
+import typing as T
 from uuid import uuid4
 
-import aioboto3
-from botocore.client import Config
-from botocore.handlers import set_list_objects_encoding_type_url
+from gcloud.aio.storage import Storage, Blob
 from loguru import logger
 
 
@@ -18,16 +17,16 @@ class S3Storage(object):
         self.access_key = access_key
         self.access_secret = access_secret
 
-    def get_session(self) -> aioboto3.Session:
-        session = aioboto3.Session(
-            aws_access_key_id=self.access_key,
-            aws_secret_access_key=self.access_secret,
-            region_name="EUROPE-WEST9",
-        )
-        session.events.unregister(
-            "before-parameter-build.s3.ListObjects", set_list_objects_encoding_type_url
-        )
-        return session
+    @staticmethod
+    def _get_id(obj_url: str) -> str:
+        if obj_url.startswith("gs://"):
+            url = obj_url.lstrip("gs://")
+            parts = url.split("/")
+            if len(parts) < 2:
+                raise RuntimeError(f"Invalid gcs url: {obj_url}")
+            return "/".join(parts[1:])
+
+        return obj_url
 
     async def save(self, content: str) -> str:
         """
@@ -36,45 +35,43 @@ class S3Storage(object):
         """
         rand_id = str(uuid4())
         decoded = base64.b64decode(content)
-        session = self.get_session()
-        async with session.client(
-            "s3",
-            endpoint_url="https://storage.googleapis.com",
-            config=Config(signature_version="s3v4"),
-        ) as s3:
+
+        async with Storage() as client:
             try:
                 logger.debug("uploading to s3", bucket=self.bucket, obj_id=rand_id)
-                await s3.upload_fileobj(BytesIO(decoded), self.bucket, rand_id)
+                await client.upload(self.bucket, rand_id, BytesIO(decoded))
             except Exception:
                 logger.exception("failed to upload file")
                 raise
 
         logger.info("uploaded to s3", bucket=self.bucket, obj_id=rand_id)
-        return f"s3://{self.bucket}/{rand_id}"
+        return f"gs://{self.bucket}/{rand_id}"
 
-    async def get_presigned_url(self, obj_id: str) -> str:
+    async def get_presigned_url(self, obj_url: str) -> str:
         """
         Given the id of the file, generate a presigned URL to share it with some other service.
         """
-        session = self.get_session()
-        async with session.client(
-            "s3", endpoint_url="https://storage.googleapis.com"
-        ) as s3:
-            try:
-                self.debug(
-                    "generating presigned url", bucket=self.bucket, obj_id=obj_id
-                )
-                resp = await s3.generate_presigned_url(
-                    "get_object",
-                    Params={"Bucket": self.bucket, "Key": obj_id},
-                    ExpiresIn=300,
-                )
-            except Exception:
-                logger.exception("failed to generate presigned url")
-                raise
+        obj_id = self._get_id(obj_url)
+
+        async with Storage() as client:
+            bucket = client.get_bucket(self.bucket)
+            blob = await bucket.get_blob(obj_id)
+            res = await self._get_presigned_url(blob)
+
+        return res
+
+    async def _get_presigned_url(self, blob: Blob) -> str:
+        try:
+            logger.debug(
+                "generating presigned url", bucket=self.bucket, obj_id=blob.name
+            )
+            resp = await blob.get_signed_url(300)
+        except Exception:
+            logger.exception("failed to generate presigned url")
+            raise
 
         logger.info(
-            "presigned url generated", bucket=self.bucket, obj_id=obj_id, resp=resp
+            "presigned url generated", bucket=self.bucket, obj_id=blob.name, resp=resp
         )
 
         return resp
@@ -98,4 +95,11 @@ if __name__ == "__main__":
         image_bin = f.read()
         content = base64.b64encode(image_bin)
 
-    print(asyncio.run(m.save(content)))
+    url = asyncio.run(m.save(content))
+    print(url)
+
+    obj_id = m._get_id(url)
+    print(obj_id)
+
+    dl_url = asyncio.run(m.get_presigned_url(url))
+    print(dl_url)
