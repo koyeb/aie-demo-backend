@@ -12,8 +12,23 @@ from s3 import storage
 from models.db import Scene
 from models.api import SceneOutput, SceneInput
 from services.describer import describer
+from services.prompter import prompter
+from services.imageeditor import image_editor
+
 
 router = APIRouter()
+
+
+async create(scene: Scene):
+    async with SessionLocal() as db:
+        db.add(scene)
+        await db.commit()
+        await db.refresh(scene)
+
+
+async update(db: AsyncSession, scene: Scene):
+    async with SessionLocal() as db:
+        await db.commit()
 
 
 @router.post(
@@ -34,25 +49,33 @@ async def scene(data: SceneInput):
         modified_at=ts,
         original_data=fpath,
     )
-    try:
-        async with SessionLocal() as db:
-            db.add(scene)
-            await db.commit()
-            await db.refresh(scene)
-    except Exception:
-        logger.exception("failed to connect to db")
+    await create(scene)
 
     logger.info("saved to disk", filepath=fpath, scene_id=scene.id)
 
     # TODO: trigger job
-    description = await describer.run(fpath)
 
-    logger.info("description returned", choices=description.choices)
+    description = await describer.run(fpath)
+    logger.info("description returned", description=description)
+    scene.description = description
+    await update(scene)
+
+    prompt = await prompter.run(description)
+    logger.info("prompt prepared", prompt=prompt)
+    scene.edit_prompt = prompt
+    await update(scene)
+
+    url = await storage.get_presigned_url(scene.original_data)
+    image = await image_editor.run(url, prompt)
+    logger.info("image edited", image=image)
+    result_url = await s3.save(image)
+    scene.result = result_url
+    await update(scene)
 
     return SceneOutput(
         id=scene.id,
         fpath=fpath,
-        description=description.choices[0].message,
-        edit_prompt="temp",
-        edit_results=["temp"],
+        description=description,
+        edit_prompt=prompt,
+        edit_results=result_url,
     )
