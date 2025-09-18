@@ -70,4 +70,4 @@ async def approve_scene(scene_id: int):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, description=str(e)
         )
 
-    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT)
+    return JSONResponse(content="", status_code=status.HTTP_204_NO_CONTENT)
