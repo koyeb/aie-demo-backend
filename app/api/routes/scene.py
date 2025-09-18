@@ -65,5 +65,5 @@ async def create_scene(data: SceneInput):
         fpath=fpath,
         description=description,
         edit_prompt=prompt,
-        edit_results=result_url,
+        result=result_url,
     )
