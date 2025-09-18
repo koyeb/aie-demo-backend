@@ -47,7 +47,7 @@ class S3Storage(object):
         logger.info("uploaded to s3", bucket=self.bucket, obj_id=rand_id)
         return f"gs://{self.bucket}/{rand_id}"
 
-    async def get_presigned_url(self, obj_url: str) -> str:
+    async def get_presigned_url(self, obj_url: str, expiration: int = 300) -> str:
         """
         Given the id of the file, generate a presigned URL to share it with some other service.
         """
@@ -56,16 +56,16 @@ class S3Storage(object):
         async with Storage() as client:
             bucket = client.get_bucket(self.bucket)
             blob = await bucket.get_blob(obj_id)
-            res = await self._get_presigned_url(blob)
+            res = await self._get_presigned_url(blob, expiration)
 
         return res
 
-    async def _get_presigned_url(self, blob: Blob) -> str:
+    async def _get_presigned_url(self, blob: Blob, expiration: int) -> str:
         try:
             logger.debug(
                 "generating presigned url", bucket=self.bucket, obj_id=blob.name
             )
-            resp = await blob.get_signed_url(300)
+            resp = await blob.get_signed_url(expiration)
         except Exception:
             logger.exception("failed to generate presigned url")
             raise

@@ -49,7 +49,7 @@ async def get_scene(scene_id: int):
 async def approve_scene(approved: SceneApproved):
 
     if not approved.url:
-        approved.url = await storage.get_presigned_url(scene.result)
+        approved.url = await storage.get_presigned_url(scene.result, 604800)
 
     try:
         scene = await db.get_scene(approved.id)

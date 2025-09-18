@@ -37,7 +37,7 @@ class Describer(object):
                         {
                             "type": "image_url",
                             "image_url": {
-                                "url": f"data:image/{ftype};base64,{content}"
+                                "url": content,
                             },
                         },
                         {
