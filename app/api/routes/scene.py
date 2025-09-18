@@ -41,7 +41,7 @@ async def create_scene(data: SceneInput, bg: BackgroundTasks):
 
     logger.info("saved to disk", filepath=fpath, scene_id=scene.id)
 
-    bg.add_task(pipeline, fpath, scene)
+    bg.add_task(pipeline, scene)
 
     return SceneOutput(
         id=scene.id,
@@ -52,9 +52,10 @@ async def create_scene(data: SceneInput, bg: BackgroundTasks):
     )
 
 
-async def pipeline(fpath: str, scene: Scene):
+async def pipeline(scene: Scene):
     try:
-        description = await describer.run(fpath)
+        url = await storage.get_presigned_url(scene.original_data)
+        description = await describer.run(url)
         logger.info("description returned", description=description)
         scene.description = description
         await db.update_scene(scene)
@@ -64,7 +65,6 @@ async def pipeline(fpath: str, scene: Scene):
         scene.edit_prompt = prompt
         await db.update_scene(scene)
 
-        url = await storage.get_presigned_url(scene.original_data)
         image = await image_editor.run(url, prompt)
         logger.info("image edited", image=image)
         result_url = await s3.save(image)
