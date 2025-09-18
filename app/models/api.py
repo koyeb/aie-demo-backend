@@ -17,7 +17,3 @@ class SceneOutput(BaseModel):
     edit_prompt: str | None
     result: str | None
 
-
-class SceneApproved(BaseModel):
-    id: int
-    result_url: str | None
