@@ -5,7 +5,7 @@ from sqlalchemy.exc import NoResultFound
 
 import db
 from s3 import storage
-from models.api import SceneOutput, SceneInput, SceneApproved
+from models.api import SceneOutput, SceneInput
 from services.emailer import emailer
 
 
