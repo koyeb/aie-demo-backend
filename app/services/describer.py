@@ -54,7 +54,7 @@ class Describer(object):
         if not res or len(res.choices) == 0 or not res.choices[0].message:
             raise RuntimeError("Missing value")
 
-        return res.choices[0].message
+        return res.choices[0].message.content
 
 
 describer = Describer(DESCRIBER_URL, DESCRIBER_API_KEY)
