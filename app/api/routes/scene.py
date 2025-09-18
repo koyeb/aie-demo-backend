@@ -38,7 +38,7 @@ async def create_scene(data: SceneInput, bg: BackgroundTasks):
         original_data=fpath,
     )
     await db.create_scene(scene)
-
+  
     logger.info("saved to disk", filepath=fpath, scene_id=scene.id)
 
     bg.add_task(pipeline, scene)
@@ -67,7 +67,7 @@ async def pipeline(scene: Scene):
 
         image = await image_editor.run(url, prompt)
         logger.info("image edited", image=image)
-        result_url = await s3.save(image)
+        result_url = await storage.save(image)
         scene.result = result_url
         await db.update_scene(scene)
 
