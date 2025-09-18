@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.concurrency import run_in_threadpool
 from loguru import logger
 
-from db import SessionLocal
+import db
 from s3 import storage
 from models.db import Scene
 from models.api import SceneOutput, SceneInput
@@ -19,24 +19,12 @@ from services.imageeditor import image_editor
 router = APIRouter()
 
 
-async create(scene: Scene):
-    async with SessionLocal() as db:
-        db.add(scene)
-        await db.commit()
-        await db.refresh(scene)
-
-
-async update(db: AsyncSession, scene: Scene):
-    async with SessionLocal() as db:
-        await db.commit()
-
-
 @router.post(
     "/scene",
     response_model=SceneOutput,
     name="scene:create",
 )
-async def scene(data: SceneInput):
+async def create_scene(data: SceneInput):
     if not data:
         raise HTTPException(status_code=400, detail="'data' argument invalid!")
 
@@ -49,7 +37,7 @@ async def scene(data: SceneInput):
         modified_at=ts,
         original_data=fpath,
     )
-    await create(scene)
+    await db.create_scene(scene)
 
     logger.info("saved to disk", filepath=fpath, scene_id=scene.id)
 
@@ -58,19 +46,19 @@ async def scene(data: SceneInput):
     description = await describer.run(fpath)
     logger.info("description returned", description=description)
     scene.description = description
-    await update(scene)
+    await db.update_scene(scene)
 
     prompt = await prompter.run(description)
     logger.info("prompt prepared", prompt=prompt)
     scene.edit_prompt = prompt
-    await update(scene)
+    await db.update_scene(scene)
 
     url = await storage.get_presigned_url(scene.original_data)
     image = await image_editor.run(url, prompt)
     logger.info("image edited", image=image)
     result_url = await s3.save(image)
     scene.result = result_url
-    await update(scene)
+    await db.update_scene(scene)
 
     return SceneOutput(
         id=scene.id,
