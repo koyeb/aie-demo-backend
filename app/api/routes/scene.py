@@ -14,6 +14,7 @@ from services.describer import describer
 from services.prompter import prompter
 from services.imageeditor import image_editor
 
+import framer
 
 router = APIRouter()
 
@@ -70,9 +71,13 @@ async def pipeline(scene: Scene):
 
             image = await image_editor.run(url, prompt)
             logger.info("image edited", image=image)
-            result_url = await storage.save(image)
+
+            framed_image = framer.frame("static/frame.png", image)
+
+            result_url = await storage.save(framed_image)
             scene.result = result_url
             await db.update_scene(session, scene)
 
         except Exception:
             logger.exception("failed to run the pipeline", scene_id=scene.id)
+
