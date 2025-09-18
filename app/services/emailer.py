@@ -4,6 +4,7 @@ from loguru import logger
 from email_lib import render_template, EmailSender
 from jinja2 import Environment, FileSystemLoader
 
+
 class Emailer(object):
     def __init__(self, smtp: str, user: str, password: str):
         self.env = Environment(loader=FileSystemLoader("app/services/templates"))
@@ -16,13 +17,13 @@ class Emailer(object):
 
     def render(self, name: str, image_url: str) -> str:
         return render_template(
-            self.env, 
-            "email_template.jinja", 
+            self.env,
+            "email_template.jinja",
             greeting="Hi",
             name=name,
             intro_lines=[
                 "Your AI Engineer Paris Koyeb Photobooth results are in!",
-                "Here is your custom edited event photo:"
+                "Here is your custom edited event photo:",
             ],
             action={
                 "link": image_url,
@@ -30,38 +31,37 @@ class Emailer(object):
             },
             tools=[
                 {
-                    "link":"https://www.koyeb.com/deploy/qwen-2-5-vl-72b-instruct",
+                    "link": "https://www.koyeb.com/deploy/qwen-2-5-vl-72b-instruct",
                     "text": "Qwen 2.5 VL 72B Instruct",
                 },
                 {
-                    "link":"https://www.koyeb.com/deploy/qwen-3-14b",
+                    "link": "https://www.koyeb.com/deploy/qwen-3-14b",
                     "text": "Qwen 3 14B",
                 },
                 {
-                    "link":"https://www.koyeb.com/deploy/flux-kontext-dev",
+                    "link": "https://www.koyeb.com/deploy/flux-kontext-dev",
                     "text": "FLUX.1 Kontext [dev]",
                 },
                 {
-                    "link":"https://app.build",
+                    "link": "https://app.build",
                     "text": "app.build",
                 },
             ],
-            outro_lines=[
-                "Thanks for taking part!"
-            ],
+            outro_lines=["Thanks for taking part!"],
             signature="The Koyeb team",
         )
 
     async def send(self, email: str, name: str, image_url: str):
         success = await self.email_sender.send_email(
-            self.render(name, image_url), 
-            email, 
+            self.render(name, image_url),
+            email,
             "Your AI Engineer Paris Koyeb Photobooth results are in!",
             text_type="html",
         )
 
         if not success:
-            raise RuntimeError(f"Failed to send email: {email} ") 
+            raise RuntimeError(f"Failed to send email: {email} ")
+
 
 emailer = Emailer(EMAIL_SMTP, EMAIL_SMTP_USER, EMAIL_SMTP_PASSWORD)
 
