@@ -20,7 +20,8 @@ router = APIRouter()
 async def get_scene(scene_id: int):
     logger.debug("getting scene by id", scene_id=scene_id)
     try:
-        scene = await db.get_scene(scene_id)
+        async with db.SessionLocal() as session:
+            scene = await db.get_scene(session, scene_id)
         logger.info(f"scene found: {scene}")
     except NoResultFound:
         logger.info("no scene found", scene_id=scene_id)
@@ -52,7 +53,9 @@ async def approve_scene(approved: SceneApproved):
         approved.url = await storage.get_presigned_url(scene.result, 604800)
 
     try:
-        scene = await db.get_scene(approved.id)
+        async with db.SessionLocal() as session:
+            scene = await db.get_scene(session, approved.id)
+
         await emailer.send(scene.email, scene.name, approved.result_url)
         logger.info(
             "email sent",
