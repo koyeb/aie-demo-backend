@@ -9,7 +9,7 @@ class Emailer(object):
     def __init__(self, smtp: str, user: str, password: str):
         self.env = Environment(loader=FileSystemLoader("services/templates"))
         self.email_sender = EmailSender(
-            from_email="support@koyeb.com",
+            from_email="aiengineerparis@koyeb.com",
             smtp_host=smtp,
             smtp_user=user,
             smtp_pass=password,

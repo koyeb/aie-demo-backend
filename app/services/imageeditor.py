@@ -16,6 +16,8 @@ class ImageEditor(object):
             json={
                 "prompt": prompt,
                 "input_image_url": url,
+                "width": 1920,
+                "height": 1080,
             },
         )
 
