@@ -54,6 +54,7 @@ async def create_scene(data: SceneInput, bg: BackgroundTasks):
 
 async def pipeline(scene: Scene):
     try:
+        scene = await db.get_scene(scene.id)
         url = await storage.get_presigned_url(scene.original_data)
         description = await describer.run(url)
         logger.info("description returned", description=description)
