@@ -24,6 +24,4 @@ async def update_scene(scene: Scene):
 
 async def get_scene(scene_id: int) -> Scene:
     async with SessionLocal() as db:
-        q = select(Scene).where(Scene.id == scene_id)
-        res = await db.execute(q)
-        return res.scalars().first()
+        return await db.get(Scene, scene_id)
