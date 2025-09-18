@@ -33,6 +33,7 @@ async def create_scene(data: SceneInput):
     ts = datetime.now()
     scene = Scene(
         email=data.email,
+        name=data.name,
         created_at=ts,
         modified_at=ts,
         original_data=fpath,
@@ -65,5 +66,5 @@ async def create_scene(data: SceneInput):
         fpath=fpath,
         description=description,
         edit_prompt=prompt,
-        edit_results=result_url,
+        result=result_url,
     )

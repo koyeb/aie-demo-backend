@@ -24,7 +24,8 @@ def upgrade() -> None:
     op.create_table(
         "scenes",
         sa.Column("id", sa.Integer, primary_key=True, index=True),
-        sa.Column("email", sa.Text, unique=True, index=True, nullable=False),
+        sa.Column("email", sa.Text, index=True, nullable=False),
+        sa.Column("name", sa.Text, nullable=False),
         sa.Column("created_at", sa.DateTime, nullable=False),
         sa.Column("modified_at", sa.DateTime, nullable=False),
         sa.Column("original_data", sa.Text, nullable=False),
