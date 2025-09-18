@@ -1,6 +1,5 @@
 import base64
 
-import aiofiles
 from openai import AsyncOpenAI
 from loguru import logger
 
@@ -20,13 +19,7 @@ class Describer(object):
             api_key=api_key,
         )
 
-    async def run(self, fpath: str, ftype: str = "png") -> str:
-        async with aiofiles.open(fpath, "rb") as f:
-            data = await f.read()
-            image_b64_content = base64.b64encode(data)
-
-        logger.debug("image loaded", fpath=fpath)
-
+    async def run(self, content: str, ftype: str = "png") -> str:
         res = await self.ai.chat.completions.create(
             messages=[
                 {
@@ -44,7 +37,7 @@ class Describer(object):
                         {
                             "type": "image_url",
                             "image_url": {
-                                "url": f"data:image/{ftype};base64,{image_b64_content.decode('ascii')}"
+                                "url": f"data:image/{ftype};base64,{content}"
                             },
                         },
                         {
