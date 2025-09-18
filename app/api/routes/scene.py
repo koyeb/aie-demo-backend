@@ -46,9 +46,9 @@ async def create_scene(data: SceneInput, bg: BackgroundTasks):
     return SceneOutput(
         id=scene.id,
         fpath=fpath,
-        description=description,
-        edit_prompt=prompt,
-        result=result_url,
+        description=None,
+        edit_prompt=None,
+        result=None,
     )
 
 
