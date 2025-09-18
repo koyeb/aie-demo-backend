@@ -2,8 +2,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-import joblib
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, BackgroundTasks
 from fastapi.concurrency import run_in_threadpool
 from loguru import logger
 
@@ -24,7 +23,7 @@ router = APIRouter()
     response_model=SceneOutput,
     name="scene:create",
 )
-async def create_scene(data: SceneInput):
+async def create_scene(data: SceneInput, bg: BackgroundTasks):
     if not data:
         raise HTTPException(status_code=400, detail="'data' argument invalid!")
 
@@ -42,24 +41,7 @@ async def create_scene(data: SceneInput):
 
     logger.info("saved to disk", filepath=fpath, scene_id=scene.id)
 
-    # TODO: trigger job
-
-    description = await describer.run(fpath)
-    logger.info("description returned", description=description)
-    scene.description = description
-    await db.update_scene(scene)
-
-    prompt = await prompter.run(description)
-    logger.info("prompt prepared", prompt=prompt)
-    scene.edit_prompt = prompt
-    await db.update_scene(scene)
-
-    url = await storage.get_presigned_url(scene.original_data)
-    image = await image_editor.run(url, prompt)
-    logger.info("image edited", image=image)
-    result_url = await s3.save(image)
-    scene.result = result_url
-    await db.update_scene(scene)
+    bg.add_task(pipeline, fpath, scene)
 
     return SceneOutput(
         id=scene.id,
@@ -68,3 +50,26 @@ async def create_scene(data: SceneInput):
         edit_prompt=prompt,
         result=result_url,
     )
+
+
+async def pipeline(fpath: str, scene: Scene):
+    try:
+        description = await describer.run(fpath)
+        logger.info("description returned", description=description)
+        scene.description = description
+        await db.update_scene(scene)
+
+        prompt = await prompter.run(description)
+        logger.info("prompt prepared", prompt=prompt)
+        scene.edit_prompt = prompt
+        await db.update_scene(scene)
+
+        url = await storage.get_presigned_url(scene.original_data)
+        image = await image_editor.run(url, prompt)
+        logger.info("image edited", image=image)
+        result_url = await s3.save(image)
+        scene.result = result_url
+        await db.update_scene(scene)
+
+    except Exception:
+        logger.exception("failed to run the pipeline", scene_id=scene.id)
