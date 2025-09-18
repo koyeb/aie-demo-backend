@@ -37,7 +37,8 @@ async def create_scene(data: SceneInput, bg: BackgroundTasks):
         modified_at=ts,
         original_data=fpath,
     )
-    await db.create_scene(scene)
+    async with db.SessionLocal() as session:
+        await db.create_scene(session, scene)
   
     logger.info("saved to disk", filepath=fpath, scene_id=scene.id)
 
@@ -53,24 +54,25 @@ async def create_scene(data: SceneInput, bg: BackgroundTasks):
 
 
 async def pipeline(scene: Scene):
-    try:
-        scene = await db.get_scene(scene.id)
-        url = await storage.get_presigned_url(scene.original_data)
-        description = await describer.run(url)
-        logger.info("description returned", description=description)
-        scene.description = description
-        await db.update_scene(scene)
+    async with db.SessionLocal() as session:
+        try:
+            scene = await db.get_scene(session, scene.id)
+            url = await storage.get_presigned_url(scene.original_data)
+            description = await describer.run(url)
+            logger.info("description returned", description=description)
+            scene.description = description
+            await db.update_scene(session, scene)
 
-        prompt = await prompter.run(description)
-        logger.info("prompt prepared", prompt=prompt)
-        scene.edit_prompt = prompt
-        await db.update_scene(scene)
+            prompt = await prompter.run(description)
+            logger.info("prompt prepared", prompt=prompt)
+            scene.edit_prompt = prompt
+            await db.update_scene(session, scene)
 
-        image = await image_editor.run(url, prompt)
-        logger.info("image edited", image=image)
-        result_url = await storage.save(image)
-        scene.result = result_url
-        await db.update_scene(scene)
+            image = await image_editor.run(url, prompt)
+            logger.info("image edited", image=image)
+            result_url = await storage.save(image)
+            scene.result = result_url
+            await db.update_scene(session, scene)
 
-    except Exception:
-        logger.exception("failed to run the pipeline", scene_id=scene.id)
+        except Exception:
+            logger.exception("failed to run the pipeline", scene_id=scene.id)
