@@ -7,7 +7,7 @@ from jinja2 import Environment, FileSystemLoader
 
 class Emailer(object):
     def __init__(self, smtp: str, user: str, password: str):
-        self.env = Environment(loader=FileSystemLoader("app/services/templates"))
+        self.env = Environment(loader=FileSystemLoader("services/templates"))
         self.email_sender = EmailSender(
             from_email="support@koyeb.com",
             smtp_host=smtp,
