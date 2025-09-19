@@ -39,10 +39,10 @@ class SceneOutput(BaseModel):
             result="",
         )
         
-        if scene.original_data:
+        if len(scene.original_data) != 0:
             output.fpath = await storage.get_presigned_url(scene.original_data)
 
-        if scene.result:
+        if len(scene.result) != 0:
             output.result = await storage.get_presigned_url(scene.result)
 
         return output
