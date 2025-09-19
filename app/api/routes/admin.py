@@ -85,7 +85,7 @@ async def list_scenes(limit: int = 10):
         async with db.SessionLocal() as session:
             scenes = await db.list_scenes(session, limit)
             logger.debug(f"scenes: {scenes}")
-            return [SceneOutput.from_db(scene) for scene in scenes]
+            return [await SceneOutput.from_db(scene) for scene in scenes]
     except NoResultFound:
         return JSONResponse(content=[])
     except Exception as e:

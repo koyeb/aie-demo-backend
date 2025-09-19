@@ -45,7 +45,7 @@ async def create_scene(data: SceneInput, bg: BackgroundTasks):
 
     bg.add_task(pipeline, scene)
 
-    return SceneOutput.from_db(scene)
+    return await SceneOutput.from_db(scene)
 
 
 async def pipeline(scene: Scene):
