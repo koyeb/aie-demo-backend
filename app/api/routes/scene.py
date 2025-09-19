@@ -40,18 +40,12 @@ async def create_scene(data: SceneInput, bg: BackgroundTasks):
     )
     async with db.SessionLocal() as session:
         await db.create_scene(session, scene)
-  
+
     logger.info("saved to disk", filepath=fpath, scene_id=scene.id)
 
     bg.add_task(pipeline, scene)
 
-    return SceneOutput(
-        id=scene.id,
-        fpath=fpath,
-        description=None,
-        edit_prompt=None,
-        result=None,
-    )
+    return SceneOutput.from_db(scene)
 
 
 async def pipeline(scene: Scene):
@@ -80,4 +74,3 @@ async def pipeline(scene: Scene):
 
         except Exception:
             logger.exception("failed to run the pipeline", scene_id=scene.id)
-
