@@ -1,3 +1,5 @@
+import typing as T
+
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
 from loguru import logger
@@ -71,3 +73,23 @@ async def approve_scene(scene_id: int):
         )
 
     return JSONResponse(content="", status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.get(
+    "/scenes",
+    response_model=T.List[SceneOutput],
+    name="admin:list",
+)
+async def list_scenes(limit: int = 10):
+    try:
+        async with db.SessionLocal() as session:
+            scenes = await db.list_scenes(session, limit)
+            logger.debug(f"scenes: {scenes}")
+            return [SceneOutput.from_db(scene) for scene in scenes]
+    except NoResultFound:
+        return JSONResponse(content=[])
+    except Exception as e:
+        logger.exception("failed to list scenes")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
