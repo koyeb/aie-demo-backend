@@ -1,5 +1,6 @@
 from datetime import datetime
 import typing as T
+from s3 import storage
 
 from pydantic import BaseModel
 
@@ -24,15 +25,15 @@ class SceneOutput(BaseModel):
     result: str | None
 
     @staticmethod
-    def from_db(scene: db.Scene) -> "SceneOutput":
+    async def from_db(scene: db.Scene) -> "SceneOutput":
         return SceneOutput(
             id=scene.id,
             email=scene.email,
             name=scene.name,
-            fpath=scene.original_data,
+            fpath=await storage.get_presigned_url(scene.original_data),
             created_at=scene.created_at,
             modified_at=scene.modified_at,
             description=scene.description,
             edit_prompt=scene.edit_prompt,
-            result=scene.result,
+            result=await storage.get_presigned_url(scene.result),
         )
