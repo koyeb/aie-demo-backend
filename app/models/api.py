@@ -1,4 +1,5 @@
 from datetime import datetime
+from sys import orig_argv
 import typing as T
 from s3 import storage
 
@@ -26,14 +27,22 @@ class SceneOutput(BaseModel):
 
     @staticmethod
     async def from_db(scene: db.Scene) -> "SceneOutput":
-        return SceneOutput(
+        output = SceneOutput(
             id=scene.id,
             email=scene.email,
             name=scene.name,
-            fpath=await storage.get_presigned_url(scene.original_data),
+            fpath="",
             created_at=scene.created_at,
             modified_at=scene.modified_at,
             description=scene.description,
             edit_prompt=scene.edit_prompt,
-            result=await storage.get_presigned_url(scene.result),
+            result="",
         )
+        
+        if scene.original_data:
+            output.fpath = await storage.get_presigned_url(scene.original_data)
+
+        if scene.result:
+            output.result = await storage.get_presigned_url(scene.result)
+
+        return output
