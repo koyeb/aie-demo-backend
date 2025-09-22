@@ -39,6 +39,7 @@ async def step_prompt(session: AsyncSession, scene: Scene) -> Scene:
     logger.info("prompt prepared", prompt=prompt)
     scene.edit_prompt = prompt
     await db.update_scene(session, scene)
+    return scene
 
 
 @with_lock(step_edit_lock)
@@ -53,6 +54,7 @@ async def step_edit(session: AsyncSession, scene: Scene) -> Scene:
     result_url = await storage.save(framed_image)
     scene.result = result_url
     await db.update_scene(session, scene)
+    return scene
 
 
 async def pipeline(scene: Scene):
