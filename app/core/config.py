@@ -29,6 +29,9 @@ EMAIL_SMTP: str = config("EMAIL_SMTP", default="")
 EMAIL_SMTP_USER: str = config("EMAIL_SMTP_USER", default="")
 EMAIL_SMTP_PASSWORD: str = config("EMAIL_SMTP_PASSWORD", default="")
 
+AUTH_USER: str = config("AUTH_USER", default="koyeb")
+AUTH_PASS: str = config("AUTH_PASS", default="")
+
 PROJECT_NAME: str = config("PROJECT_NAME", default="aie")
 
 # logging configuration
