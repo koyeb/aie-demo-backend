@@ -1,5 +1,4 @@
 import asyncio
-import typing as T
 
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -22,31 +21,28 @@ step_edit_lock = asyncio.Lock()
 
 @with_lock(step_describe_lock)
 @with_retry(3, 1)
-async def step_describe(session: AsyncSession, scene: Scene) -> T.Tuple[Scene, str]:
+async def step_describe(session: AsyncSession, scene: Scene) -> Scene:
     scene = await db.get_scene(session, scene.id)
     url = await storage.get_presigned_url(scene.original_data)
     description = await describer.run(url)
     logger.info("description returned", description=description)
     scene.description = description
     await db.update_scene(session, scene)
-    return scene, description
+    return scene
 
 
 @with_lock(step_prompt_lock)
 @with_retry(3, 1)
-async def step_prompt(
-    session: AsyncSession, scene: Scene, description: str
-) -> T.Tuple[Scene, str]:
+async def step_prompt(session: AsyncSession, scene: Scene) -> Scene:
     prompt = await prompter.run(scene.description)
     logger.info("prompt prepared", prompt=prompt)
     scene.edit_prompt = prompt
     await db.update_scene(session, scene)
-    return scene, prompt
 
 
 @with_lock(step_edit_lock)
 @with_retry(3, 1)
-async def step_edit(session: AsyncSession, scene: Scene, prompt: str) -> Scene:
+async def step_edit(session: AsyncSession, scene: Scene) -> Scene:
     image = await image_editor.run(url, scene.edit_prompt)
     logger.info("image edited", image=image)
 
@@ -55,15 +51,14 @@ async def step_edit(session: AsyncSession, scene: Scene, prompt: str) -> Scene:
     result_url = await storage.save(framed_image)
     scene.result = result_url
     await db.update_scene(session, scene)
-    return scene
 
 
 async def pipeline(scene: Scene):
     async with db.SessionLocal() as session:
         try:
-            scene, description = await step_describe(session, scene)
-            scene, prompt = await step_prompt(session, scene, description)
-            scene = await step_edit(session, scene, prompt)
+            scene = await step_describe(session, scene)
+            scene = await step_prompt(session, scene)
+            scene = await step_edit(session, scene)
 
         except Exception:
             logger.exception("failed to run the pipeline", scene_id=scene.id)
