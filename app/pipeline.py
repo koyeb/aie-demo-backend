@@ -34,7 +34,7 @@ async def step_describe(session: AsyncSession, scene: Scene) -> Scene:
 @with_lock(step_prompt_lock)
 @with_retry(3, 1)
 async def step_prompt(session: AsyncSession, scene: Scene) -> Scene:
-    prompt = await prompter.run(description)
+    prompt = await prompter.run(scene.description)
     logger.info("prompt prepared", prompt=prompt)
     scene.edit_prompt = prompt
     await db.update_scene(session, scene)
@@ -43,7 +43,7 @@ async def step_prompt(session: AsyncSession, scene: Scene) -> Scene:
 @with_lock(step_edit_lock)
 @with_retry(3, 1)
 async def step_edit(session: AsyncSession, scene: Scene) -> Scene:
-    image = await image_editor.run(url, prompt)
+    image = await image_editor.run(url, scene.edit_prompt)
     logger.info("image edited", image=image)
 
     framed_image = framer.frame("static/frame.png", image)
