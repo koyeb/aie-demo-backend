@@ -4,6 +4,7 @@ from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.lock import with_lock
+from core.retry import with_retry
 import db
 import framer
 from s3 import storage
@@ -19,6 +20,7 @@ step_edit_lock = asyncio.Lock()
 
 
 @with_lock(step_describe_lock)
+@with_retry(3, 1)
 async def step_describe(session: AsyncSession, scene: Scene) -> Scene:
     scene = await db.get_scene(session, scene.id)
     url = await storage.get_presigned_url(scene.original_data)
@@ -30,6 +32,7 @@ async def step_describe(session: AsyncSession, scene: Scene) -> Scene:
 
 
 @with_lock(step_prompt_lock)
+@with_retry(3, 1)
 async def step_prompt(session: AsyncSession, scene: Scene) -> Scene:
     prompt = await prompter.run(description)
     logger.info("prompt prepared", prompt=prompt)
@@ -38,6 +41,7 @@ async def step_prompt(session: AsyncSession, scene: Scene) -> Scene:
 
 
 @with_lock(step_edit_lock)
+@with_retry(3, 1)
 async def step_edit(session: AsyncSession, scene: Scene) -> Scene:
     image = await image_editor.run(url, prompt)
     logger.info("image edited", image=image)
