@@ -8,7 +8,7 @@ from sqlalchemy.future import select
 from core.config import DATABASE_URL
 from models.db import Scene
 
-engine = create_async_engine(DATABASE_URL)
+engine = create_async_engine(DATABASE_URL, pool_recycle=300)
 SessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
