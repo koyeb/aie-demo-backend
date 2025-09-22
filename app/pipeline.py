@@ -21,9 +21,8 @@ step_edit_lock = asyncio.Lock()
 
 @with_lock(step_describe_lock)
 @with_retry(3, 1)
-async def step_describe(session: AsyncSession, scene: Scene) -> Scene:
+async def step_describe(session: AsyncSession, scene: Scene, url: str) -> Scene:
     scene = await db.get_scene(session, scene.id)
-    url = await storage.get_presigned_url(scene.original_data)
     description = await describer.run(url)
     logger.info("description returned", description=description)
     scene.description = description
@@ -44,7 +43,7 @@ async def step_prompt(session: AsyncSession, scene: Scene) -> Scene:
 
 @with_lock(step_edit_lock)
 @with_retry(3, 1)
-async def step_edit(session: AsyncSession, scene: Scene) -> Scene:
+async def step_edit(session: AsyncSession, scene: Scene, url: str) -> Scene:
     await session.refresh(scene)
     image = await image_editor.run(url, scene.edit_prompt)
     logger.info("image edited", image=image)
@@ -60,9 +59,10 @@ async def step_edit(session: AsyncSession, scene: Scene) -> Scene:
 async def pipeline(scene: Scene):
     async with db.SessionLocal() as session:
         try:
-            scene = await step_describe(session, scene)
+            url = await storage.get_presigned_url(scene.original_data)
+            scene = await step_describe(session, scene, url)
             scene = await step_prompt(session, scene)
-            scene = await step_edit(session, scene)
+            scene = await step_edit(session, scene, url)
 
         except Exception:
             logger.exception("failed to run the pipeline", scene_id=scene.id)
