@@ -21,8 +21,8 @@ class ImageEditor(object):
             },
         )
 
-        if not resp:
-            raise RuntimeError("Request failed")
+        if not resp or resp.status_code != 200:
+            resp.raise_for_status()
 
         return resp.json()
 
