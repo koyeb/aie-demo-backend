@@ -47,7 +47,7 @@ class Describer(object):
                     ],
                 },
             ],
-            model="Qwen/Qwen2.5-VL-72B-Instruct",
+            model="Qwen/Qwen3-VL-235B-A22B-Instruct",
             max_tokens=100,
         )
 
