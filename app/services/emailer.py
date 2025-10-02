@@ -31,8 +31,8 @@ class Emailer(object):
             },
             tools=[
                 {
-                    "link": "https://www.koyeb.com/deploy/qwen-2-5-vl-72b-instruct",
-                    "text": "Qwen 2.5 VL 72B Instruct",
+                    "link": "https://www.koyeb.com/deploy/qwen-3-vl-235b-a22b-instruct",
+                    "text": "Qwen 3 VL 235B A22B Instruct",
                 },
                 {
                     "link": "https://www.koyeb.com/deploy/qwen-3-14b",
